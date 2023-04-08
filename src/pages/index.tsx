@@ -5,14 +5,31 @@ import Link from "next/link";
 
 import { api } from "~/utils/api";
 
+const CreatePostWizard = () => {
+  const { user } = useUser()
+
+  if (!user) return null
+
+  return (
+    <div className="flex gap-3 w-full">
+      <img src={user.profileImageUrl} alt="Profile image" className="h-14 w-14 rounded-full" />
+      <input placeholder="Type something" className="bg-transparent grow outline-none" />
+    </div>
+  )
+}
+
 const Home: NextPage = () => {
   const user = useUser();
 
   const { data, isLoading } = api.post.getAll.useQuery();
 
+  console.log('user -->', user)
+
   if (isLoading) return <div>Loading...</div>;
 
   if (!data) return <div>Something went wrong</div>;
+
+  console.log('user', user.isSignedIn)
 
   return (
     <>
@@ -29,7 +46,7 @@ const Home: NextPage = () => {
                 <SignInButton />
               </div>
             )}
-            {!!user.isSignedIn && <SignOutButton />}
+            {user.isSignedIn && <CreatePostWizard />}
           </div>
           <div className="flex flex-col">
             {[...data, ...data]?.map((post) => (
